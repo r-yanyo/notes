@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
     <title>notes2</title>
   </head>
   <body>
@@ -13,5 +14,20 @@
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+
+      <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyAyi3CIM6t2di_e7rU4ApA_frs2t7aJFes",
+      authDomain: "notes-ba3c8.firebaseapp.com",
+      databaseURL: "https://notes-ba3c8.firebaseio.com",
+      projectId: "notes-ba3c8",
+      storageBucket: "",
+      messagingSenderId: "785445619775"
+    };
+    firebase.initializeApp(config);
+  </script>
   </body>
 </html>

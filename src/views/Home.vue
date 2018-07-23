@@ -3,10 +3,13 @@
     <div class='header'>
       <div class='buttons'>
         <span class="icon is-midium">
+          <button @click="addFolder"><i class="far fa-2x fa-folder"></i></button>
+        </span>
+        <span class="icon is-midium">
           <button @click="addMemo"><i class="fas fa-2x fa-edit"></i></button>
         </span>
         <span class="icon is-midium">
-          <button @click="deleteMemo"><i class="far fa-2x fa-trash-alt"></i></button>
+          <button @click="deleteFolderOrMemo"><i class="far fa-2x fa-trash-alt"></i></button>
         </span>
       </div>
       <div>
@@ -16,15 +19,26 @@
     </div>
 
     <div class="level mainContent">
+      <div class='foldersWrapper'>
+        <div v-if="folders.length">
+          <div class='folder-list' v-for="(folder, index) in folders" @click="selectFolder(index)" :focused="focusing =='folder'" :data-selected="index==selectedFolderIndex" v-bind:key="index">
+            <p>{{folder.title}}</p>
+          </div>
+        </div>
+      </div>
       <div class="memosWrapper">
-        <div class="memoList" v-for="(memo, index) in memos" @click="selectMemo(index)" :data-selected="index==selectedIndex" v-bind:key="index">
-          <p class="memo-title">{{memo.markdown | title}}</p>
-          <p class="memo-digest">{{memo.updateDate}} {{memo.markdown | digest}}</p>
+        <div v-if="selectedMemos.length">
+          <div class="memo-list" v-for="(memo, index) in selectedMemos" @click="selectMemo(index)" :focused="focusing == 'memo'" :data-selected="index==selectedMemoIndex" v-bind:key="index">
+            <p class="memo-title">{{memo.markdown | title}}</p>
+            <p class="memo-digest">{{memo.updateDate}} {{memo.markdown | digest}}</p>
+          </div>
         </div>
       </div>
       <div class="editorWrapper">
-        <p class="update-date">{{memos[selectedIndex].updateDate}}</p>
-        <textarea class="editor" placeholder="todo" v-model="memos[selectedIndex].markdown" />
+        <div v-if="selectedMemos.length">
+          <p class="update-date">{{selectedMemos[selectedMemoIndex].updateDate}}</p>
+          <textarea class="editor" placeholder="todo" @click="selectEditor" v-model="selectedMemos[selectedMemoIndex].markdown" />
+        </div>
       </div>
     </div>
   </div>
@@ -40,13 +54,20 @@ export default {
   data() {
     return {
       user: null,
-      memos: [
+      folders: [
         {
-          updateDate: null,
-          markdown: "load中"
+          title: "New Folder",
+          memos: [
+            {
+              updateDate: "null",
+              markdown: "load中"
+            }
+          ]
         }
       ],
-      selectedIndex: 0
+      selectedFolderIndex: 0,
+      selectedMemoIndex: 0,
+      focusing: null // folder or memo
     };
   },
   created() {
@@ -58,31 +79,38 @@ export default {
         .once("value")
         .then(result => {
           if (result.val()) {
-            this.memos = result.val();
+            this.folders = result.val();
           }
         });
     });
   },
   watch: {
-    memos: {
+    selectedMemos: {
       handler(val) {
-        val[this.selectedIndex].updateDate = moment().format(
-          "YYYY-MM-DD HH:mm"
-        );
-        this.saveMemos();
+        if (val[this.selectedMemoIndex]) {
+          val[this.selectedMemoIndex].updateDate = moment().format(
+            "YYYY-MM-DD HH:mm"
+          );
+          this.saveMemos();
+        }
       },
       deep: true
     }
   },
   filters: {
     title(markdown) {
-      return markdown !== "" ? markdown.split("\n")[0] : "New memo";
+      return markdown != "" ? markdown.trim().split("\n")[0] : "New Note";
     },
     digest(markdown) {
-      const digest = markdown.split("\n")[1];
+      const digest = markdown.trim().split("\n")[1];
       return digest !== undefined && digest !== ""
         ? digest
         : "No additional text";
+    }
+  },
+  computed: {
+    selectedMemos() {
+      return this.folders[this.selectedFolderIndex].memos;
     }
   },
   methods: {
@@ -90,26 +118,53 @@ export default {
       auth.logout();
     },
     addMemo() {
-      this.memos.push({
+      this.selectedMemos.push({
         updateDate: moment().format("YYYY-MM-DD HH:mm"),
         markdown: ""
       });
-      this.selectedIndex = this.memos.length - 1;
+      this.selectedMemoIndex = this.selectedMemos.length - 1;
     },
-    deleteMemo() {
-      this.memos.splice(this.selectedIndex, 1);
-      if (this.selectedIndex > 0) {
-        this.selectedIndex--;
+    addFolder() {
+      this.folders.push({
+        title: "New Folder",
+        memos: [{}]
+      });
+      this.selectedFolderIndex = this.folders.length - 1;
+    },
+    deleteFolderOrMemo() {
+      if (this.focusing == "folder") {
+        const result = confirm("フォルダーを消しても良いですか？");
+        if (result) {
+          this.folders.splice(this.selectedFolderIndex, 1);
+          if (this.selectedFolderIndex > 0) {
+            this.selectedFolderIndex--;
+          }
+        }
+      } else if (this.focusing == "memo") {
+        this.selectedMemos.splice(this.selectedMemoIndex, 1);
+        if (this.selectedMemoIndex > 0) {
+          this.selectedMemoIndex--;
+        }
       }
+      this.saveMemos();
+    },
+    selectFolder(index) {
+      this.selectedFolderIndex = index;
+      this.selectedMemoIndex = 0;
+      this.focusing = "folder";
     },
     selectMemo(index) {
-      this.selectedIndex = index;
+      this.selectedMemoIndex = index;
+      this.focusing = "memo";
+    },
+    selectEditor() {
+      this.focusing = "editor";
     },
     saveMemos() {
       firebase
         .database()
         .ref("memos/" + this.user.uid)
-        .set(this.memos);
+        .set(this.folders);
     }
   }
 };
@@ -130,12 +185,31 @@ export default {
   height: 100%;
   align-items: start;
 }
-.memosWrapper {
-  width: 30%;
+.foldersWrapper {
+  width: 20rem;
+  height: 100%;
+  background-color: #dad9da;
+  border: solid 1px silver;
+  border-top: none;
 }
-.memoList {
+.folder-list {
   &[data-selected="true"] {
-    background-color: #fde36d;
+    background-color: #979797;
+    &[focused="true"] {
+      color: white;
+      background-color: #0b5ad5;
+    }
+  }
+}
+.memosWrapper {
+  width: 20rem;
+}
+.memo-list {
+  &[data-selected="true"] {
+    background-color: #e1e0e0;
+    &[focused="true"] {
+      background-color: #fde36d;
+    }
   }
 }
 .memo-digest {
@@ -153,13 +227,15 @@ export default {
   height: 100%;
   border: solid 1px silver;
   border-top: none;
+  > div {
+    height: 100%;
+  }
   .update-date {
     font-size: 0.8rem;
     color: gray;
   }
   .editor {
     width: 100%;
-    height: 100%;
     border: none;
   }
   .editor:focus {

@@ -8,9 +8,6 @@
         <span class="icon is-midium">
           <button @click="deleteMemo"><i class="far fa-2x fa-trash-alt"></i></button>
         </span>
-        <span class="icon is-midium">
-          <button @click="saveMemos"><i class="far fa-2x fa-save"></i></button>
-        </span>
       </div>
       <div>
         <p v-if="user" style="display: inline-block">{{user.displayName}}</p>
@@ -22,10 +19,11 @@
       <div class="memosWrapper">
         <div class="memoList" v-for="(memo, index) in memos" @click="selectMemo(index)" :data-selected="index==selectedIndex" v-bind:key="index">
           <p class="memo-title">{{memo.markdown | title}}</p>
-          <p class="memo-digest">{{memo.markdown | digest}}</p>
+          <p class="memo-digest">{{memo.updateDate}} {{memo.markdown | digest}}</p>
         </div>
       </div>
       <div class="editorWrapper">
+        <p class="update-date">{{memos[selectedIndex].updateDate}}</p>
         <textarea class="editor" placeholder="todo" v-model="memos[selectedIndex].markdown" />
       </div>
     </div>
@@ -34,6 +32,7 @@
 
 <script>
 import auth from "../utils/auth";
+import moment from "moment";
 
 /* global firebase */
 
@@ -43,6 +42,7 @@ export default {
       user: null,
       memos: [
         {
+          updateDate: null,
           markdown: "load中"
         }
       ],
@@ -63,6 +63,17 @@ export default {
         });
     });
   },
+  watch: {
+    memos: {
+      handler(val) {
+        val[this.selectedIndex].updateDate = moment().format(
+          "YYYY-MM-DD HH:mm"
+        );
+        this.saveMemos();
+      },
+      deep: true
+    }
+  },
   filters: {
     title(markdown) {
       return markdown !== "" ? markdown.split("\n")[0] : "New memo";
@@ -80,6 +91,7 @@ export default {
     },
     addMemo() {
       this.memos.push({
+        updateDate: moment().format("YYYY-MM-DD HH:mm"),
         markdown: ""
       });
       this.selectedIndex = this.memos.length - 1;
@@ -126,6 +138,10 @@ export default {
     background-color: #fde36d;
   }
 }
+.memo-digest {
+  font-size: 0.8rem;
+  color: gray;
+}
 .buttons {
   flex-grow: 1;
   .icon {
@@ -135,12 +151,22 @@ export default {
 .editorWrapper {
   width: 100%;
   height: 100%;
-}
-.editor {
-  width: 100%;
-  height: 100%;
   border: solid 1px silver;
+  border-top: none;
+  .update-date {
+    font-size: 0.8rem;
+    color: gray;
+  }
+  .editor {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  .editor:focus {
+    outline: none !important;
+  }
 }
+
 .icon {
   button {
     box-sizing: content-box;

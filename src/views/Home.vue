@@ -147,7 +147,7 @@ export default {
             this.selectedFolderIndex--;
           }
         }
-      } else if (this.focusing == "memo") {
+      } else if (this.focusing == "memo" || this.focusing == "editor") {
         this.selectedMemos.splice(this.selectedMemoIndex, 1);
         if (this.selectedMemoIndex > 0) {
           this.selectedMemoIndex--;

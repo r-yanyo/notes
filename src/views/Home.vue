@@ -99,7 +99,9 @@ export default {
   },
   filters: {
     title(markdown) {
-      return markdown != "" ? markdown.trim().split("\n")[0] : "New Note";
+      return markdown !== undefined && markdown != ""
+        ? markdown.trim().split("\n")[0]
+        : "New Note";
     },
     digest(markdown) {
       const digest = markdown.trim().split("\n")[1];
@@ -127,7 +129,12 @@ export default {
     addFolder() {
       this.folders.push({
         title: "New Folder",
-        memos: [{}]
+        memos: [
+          {
+            updateDate: null,
+            markdown: ""
+          }
+        ]
       });
       this.selectedFolderIndex = this.folders.length - 1;
     },

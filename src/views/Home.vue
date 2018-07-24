@@ -18,8 +18,8 @@
       </div>
     </div>
 
-    <div class="level mainContent">
-      <div class='foldersWrapper'>
+    <div class="mainContent">
+      <div class='foldersWrapper hidden-mobile'>
         <div v-if="folders.length">
           <div class='folder-list' v-for="(folder, index) in folders" @click="selectFolder(index)" :focused="focusing =='folder'" :data-selected="index==selectedFolderIndex" v-bind:key="index">
             <p>{{folder.title}}</p>
@@ -176,13 +176,15 @@ export default {
 }
 .header {
   display: flex;
+  height: 10%;
   padding: 10px;
   justify-content: space-around;
-  border-bottom: solid 1px gray;
+  border: solid 1px gray;
   background-color: #dad9da;
 }
 .mainContent {
-  height: 100%;
+  height: 90%;
+  display: flex;
   align-items: start;
 }
 .foldersWrapper {
@@ -242,12 +244,16 @@ export default {
     outline: none !important;
   }
 }
-
 .icon {
   button {
     box-sizing: content-box;
     border-radius: 10%;
     border-color: white;
+  }
+}
+@media screen and (max-width: 770px) {
+  .hidden-mobile {
+    display: none;
   }
 }
 </style>

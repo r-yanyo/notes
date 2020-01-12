@@ -54,11 +54,14 @@
           </div>
         </div>
       </div>
-      <div class="editorWrapper">
-        <div v-if="selectedMemos.length">
-          <p class="update-date">{{selectedMemos[selectedMemoIndex].updateDate}}</p>
-          <textarea class="editor" placeholder="todo" @click="selectEditor" v-model="selectedMemos[selectedMemoIndex].markdown" />
-        </div>
+      <div v-if="selectedMemos.length" class="editorWrapper">
+        <p class="update-date">{{selectedMemos[selectedMemoIndex].updateDate}}</p>
+        <textarea
+          class="editor"
+          placeholder="todo"
+          @click="selectEditor"
+          v-model="selectedMemos[selectedMemoIndex].markdown"
+        />
       </div>
     </div>
   </div>
@@ -248,12 +251,14 @@ export default {
 .buttons {
   flex-grow: 1;
   .icon {
-    margin: 0 5%;
+    margin: 0 20px;
   }
 }
 .editorWrapper {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
   border: solid 1px silver;
   border-top: none;
   > div {
@@ -264,7 +269,8 @@ export default {
     color: gray;
   }
   .editor {
-    width: 100%;
+    flex-grow: 1;
+    resize: none;
     border: none;
   }
   .editor:focus {

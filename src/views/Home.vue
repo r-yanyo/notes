@@ -19,7 +19,7 @@
         </span>
       </div>
       <div>
-        <p v-if="user" style="display: inline-block">{{user.displayName}}</p>
+        <p v-if="user" style="display: inline-block">{{ user.displayName }}</p>
         <button @click="logout">ログアウト</button>
       </div>
     </div>
@@ -31,11 +31,11 @@
             class="folder-list"
             v-for="(folder, index) in folders"
             @click="selectFolder(index)"
-            :focused="focusing =='folder'"
-            :data-selected="index==selectedFolderIndex"
+            :focused="focusing == 'folder'"
+            :data-selected="index == selectedFolderIndex"
             v-bind:key="index"
           >
-            <p>{{folder.title}}</p>
+            <p>{{ folder.title }}</p>
           </div>
         </div>
       </div>
@@ -46,16 +46,16 @@
             v-for="(memo, index) in selectedMemos"
             @click="selectMemo(index)"
             :focused="focusing == 'memo'"
-            :data-selected="index==selectedMemoIndex"
+            :data-selected="index == selectedMemoIndex"
             v-bind:key="index"
           >
-            <p class="memo-title">{{memo.markdown | title}}</p>
-            <p class="memo-digest">{{memo.updateDate}} {{memo.markdown | digest}}</p>
+            <p class="memo-title">{{ memo.markdown | title }}</p>
+            <p class="memo-digest">{{ memo.updateDate }} {{ memo.markdown | digest }}</p>
           </div>
         </div>
       </div>
       <div v-if="selectedMemos.length" class="editorWrapper">
-        <p class="update-date">{{selectedMemos[selectedMemoIndex].updateDate}}</p>
+        <p class="update-date">{{ selectedMemos[selectedMemoIndex].updateDate }}</p>
         <textarea
           class="editor"
           placeholder="todo"

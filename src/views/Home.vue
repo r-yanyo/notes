@@ -1,15 +1,21 @@
 <template>
   <div class="home">
-    <div class='header'>
-      <div class='buttons'>
+    <div class="header">
+      <div class="buttons">
         <span class="icon is-midium">
-          <button @click="addFolder"><i class="far fa-2x fa-folder"></i></button>
+          <button @click="addFolder">
+            <i class="far fa-2x fa-folder"></i>
+          </button>
         </span>
         <span class="icon is-midium">
-          <button @click="addMemo"><i class="fas fa-2x fa-edit"></i></button>
+          <button @click="addMemo">
+            <i class="fas fa-2x fa-edit"></i>
+          </button>
         </span>
         <span class="icon is-midium">
-          <button @click="deleteFolderOrMemo"><i class="far fa-2x fa-trash-alt"></i></button>
+          <button @click="deleteFolderOrMemo">
+            <i class="far fa-2x fa-trash-alt"></i>
+          </button>
         </span>
       </div>
       <div>
@@ -19,16 +25,30 @@
     </div>
 
     <div class="mainContent">
-      <div class='foldersWrapper hidden-mobile'>
+      <div class="foldersWrapper hidden-mobile">
         <div v-if="folders.length">
-          <div class='folder-list' v-for="(folder, index) in folders" @click="selectFolder(index)" :focused="focusing =='folder'" :data-selected="index==selectedFolderIndex" v-bind:key="index">
+          <div
+            class="folder-list"
+            v-for="(folder, index) in folders"
+            @click="selectFolder(index)"
+            :focused="focusing =='folder'"
+            :data-selected="index==selectedFolderIndex"
+            v-bind:key="index"
+          >
             <p>{{folder.title}}</p>
           </div>
         </div>
       </div>
       <div class="memosWrapper">
         <div v-if="selectedMemos.length">
-          <div class="memo-list" v-for="(memo, index) in selectedMemos" @click="selectMemo(index)" :focused="focusing == 'memo'" :data-selected="index==selectedMemoIndex" v-bind:key="index">
+          <div
+            class="memo-list"
+            v-for="(memo, index) in selectedMemos"
+            @click="selectMemo(index)"
+            :focused="focusing == 'memo'"
+            :data-selected="index==selectedMemoIndex"
+            v-bind:key="index"
+          >
             <p class="memo-title">{{memo.markdown | title}}</p>
             <p class="memo-digest">{{memo.updateDate}} {{memo.markdown | digest}}</p>
           </div>

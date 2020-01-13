@@ -7,6 +7,11 @@
             <i class="far fa-2x fa-folder"></i>
           </button>
         </span>
+        <span class="icon is-midium show-mobile">
+          <button @click="toggleFolders">
+            <i class="fas fa-2x fa-sliders-h"></i>
+          </button>
+        </span>
         <span class="icon is-midium">
           <button @click="addMemo">
             <i class="fas fa-2x fa-edit"></i>
@@ -25,7 +30,7 @@
     </div>
 
     <div class="mainContent">
-      <div class="foldersWrapper hidden-mobile">
+      <div class="foldersWrapper hidden-mobile" :class="{fullscreen: showFolders}">
         <div v-if="folders.length">
           <div
             class="folder-list"
@@ -88,6 +93,7 @@ export default {
           ]
         }
       ],
+      showFolders: false,
       selectedFolderIndex: 0,
       selectedMemoIndex: 0,
       focusing: null // folder or memo
@@ -182,6 +188,7 @@ export default {
       this.selectedFolderIndex = index;
       this.selectedMemoIndex = 0;
       this.focusing = "folder";
+      this.showFolders = false;
     },
     selectMemo(index) {
       this.selectedMemoIndex = index;
@@ -195,6 +202,9 @@ export default {
         .database()
         .ref("memos/" + this.user.uid)
         .set(this.folders);
+    },
+    toggleFolders() {
+      this.showFolders = !this.showFolders;
     }
   }
 };
@@ -214,6 +224,7 @@ export default {
 }
 .mainContent {
   height: 90%;
+  position: relative;
   display: flex;
   align-items: start;
 }
@@ -284,9 +295,20 @@ export default {
     border-color: white;
   }
 }
-@media screen and (max-width: 770px) {
+.show-mobile {
+  display: none;
+}
+@media screen and (max-width: 480px) {
   .hidden-mobile {
     display: none;
+  }
+  .show-mobile {
+    display: inherit;
+  }
+  .fullscreen {
+    display: block;
+    position: absolute;
+    width: 100%;
   }
 }
 </style>

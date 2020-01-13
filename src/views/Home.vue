@@ -39,6 +39,9 @@
             :focused="focusing == 'folder'"
             :data-selected="index == selectedFolderIndex"
             v-bind:key="index"
+            @keydown.prevent.up.exact="movePreviousFolder"
+            @keydown.prevent.down.exact="moveNextFolder"
+            tabindex="0"
           >
             <p>{{ folder.title }}</p>
           </div>
@@ -53,6 +56,9 @@
             :focused="focusing == 'memo'"
             :data-selected="index == selectedMemoIndex"
             v-bind:key="index"
+            @keydown.prevent.up.exact="movePreviousMemo"
+            @keydown.prevent.down.exact="moveNextMemo"
+            tabindex="0"
           >
             <p class="memo-title">{{ memo.markdown | title }}</p>
             <p class="memo-digest">{{ memo.updateDate }} {{ memo.markdown | digest }}</p>
@@ -205,6 +211,33 @@ export default {
     },
     toggleFolders() {
       this.showFolders = !this.showFolders;
+    },
+    movePreviousFolder(event) {
+      if (this.selectedFolderIndex !== 0) {
+        this.selectFolder(this.selectedFolderIndex - 1);
+        event.target.previousSibling.focus();
+      }
+    },
+    moveNextFolder(event) {
+      if (this.selectedFolderIndex !== this.folders.length - 1) {
+        this.selectFolder(this.selectedFolderIndex + 1);
+        event.target.nextSibling.focus();
+      }
+    },
+    movePreviousMemo(event) {
+      if (this.selectedMemoIndex !== 0) {
+        this.selectMemo(this.selectedMemoIndex - 1);
+        event.target.previousSibling.focus();
+      }
+    },
+    moveNextMemo(event) {
+      if (
+        this.selectedMemoIndex !==
+        this.folders[this.selectedFolderIndex].memos.length - 1
+      ) {
+        this.selectMemo(this.selectedMemoIndex + 1);
+        event.target.nextSibling.focus();
+      }
     }
   }
 };

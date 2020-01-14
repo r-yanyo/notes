@@ -320,6 +320,7 @@ export default {
   flex-direction: column;
   border: solid 1px silver;
   border-top: none;
+  padding: 4px;
   > div {
     height: 100%;
   }
@@ -328,6 +329,7 @@ export default {
     color: gray;
   }
   .editor {
+    font-size: 1rem;
     flex-grow: 1;
     resize: none;
     border: none;

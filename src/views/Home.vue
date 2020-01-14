@@ -30,17 +30,18 @@
     </div>
 
     <div class="mainContent">
-      <div class="foldersWrapper hidden-mobile" :class="{fullscreen: showFolders}">
+      <div class="foldersWrapper hidden-mobile" :class="{ fullscreen: showFolders }">
         <div v-if="folders.length">
           <div
             class="folder-list"
             v-for="(folder, index) in folders"
             @click="selectFolder(index)"
             :focused="focusing == 'folder'"
-            :data-selected="index == selectedFolderIndex"
+            :data-selected="index === selectedFolderIndex"
             v-bind:key="index"
             @keydown.prevent.up.exact="movePreviousFolder"
             @keydown.prevent.down.exact="moveNextFolder"
+            @keydown.prevent.right.exact="focusMemos"
             tabindex="0"
           >
             <p>{{ folder.title }}</p>
@@ -58,6 +59,8 @@
             v-bind:key="index"
             @keydown.prevent.up.exact="movePreviousMemo"
             @keydown.prevent.down.exact="moveNextMemo"
+            @keydown.prevent.left.exact="focusFolders"
+            @keydown.prevent.right.exact="focusEditor"
             tabindex="0"
           >
             <p class="memo-title">{{ memo.markdown | title }}</p>
@@ -68,6 +71,7 @@
       <div v-if="selectedMemos.length" class="editorWrapper">
         <p class="update-date">{{ selectedMemos[selectedMemoIndex].updateDate }}</p>
         <textarea
+          id="editor"
           class="editor"
           placeholder="todo"
           @click="selectEditor"
@@ -102,7 +106,7 @@ export default {
       showFolders: false,
       selectedFolderIndex: 0,
       selectedMemoIndex: 0,
-      focusing: null // folder or memo
+      focusing: null // folder, memo or editor
     };
   },
   created() {
@@ -238,6 +242,17 @@ export default {
         this.selectMemo(this.selectedMemoIndex + 1);
         event.target.nextSibling.focus();
       }
+    },
+    focusFolders() {
+      this.focusing = "folder";
+      document.querySelectorAll('[data-selected="true"]')[0].focus();
+    },
+    focusMemos() {
+      this.focusing = "memo";
+      document.querySelectorAll('[data-selected="true"]')[1].focus();
+    },
+    focusEditor() {
+      document.getElementById("editor").focus();
     }
   }
 };

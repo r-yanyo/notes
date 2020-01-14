@@ -20,7 +20,6 @@ const router = new Router({
       name: "login",
       component: Login,
       beforeEnter: (to, from, next) => {
-        // ログイン中なら"/login"から"/home"へリダイレクト
         auth.isLoggedIn().then(isLoggedIn => {
           if (to.path == "/login" && isLoggedIn) {
             next({
@@ -37,8 +36,6 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    // このルートはログインされているかどうか認証が必要です。
-    // もしされていないならば、ログインページにリダイレクトします。
     auth.isLoggedIn().then(isLoggedIn => {
       if (!isLoggedIn) {
         next({

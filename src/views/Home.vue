@@ -24,8 +24,8 @@
         </span>
       </div>
       <div>
-        <p v-if="user" style="display: inline-block">{{ user.displayName }}</p>
-        <button @click="logout">ログアウト</button>
+        <button v-if="user" @click="logout">ログアウト</button>
+        <router-link v-else to="/login" tag="button">ログイン</router-link>
       </div>
     </div>
 
@@ -98,7 +98,7 @@ export default {
           memos: [
             {
               updateDate: "null",
-              markdown: "load中"
+              markdown: ""
             }
           ]
         }
@@ -111,16 +111,18 @@ export default {
   },
   created() {
     auth.getUser().then(user => {
-      this.user = user;
-      firebase
-        .database()
-        .ref("memos/" + this.user.uid)
-        .once("value")
-        .then(result => {
-          if (result.val()) {
-            this.folders = result.val();
-          }
-        });
+      if (user) {
+        this.user = user;
+        firebase
+          .database()
+          .ref("memos/" + this.user.uid)
+          .once("value")
+          .then(result => {
+            if (result.val()) {
+              this.folders = result.val();
+            }
+          });
+      }
     });
   },
   watch: {
@@ -208,10 +210,11 @@ export default {
       this.focusing = "editor";
     },
     saveMemos() {
-      firebase
-        .database()
-        .ref("memos/" + this.user.uid)
-        .set(this.folders);
+      if (this.user)
+        firebase
+          .database()
+          .ref("memos/" + this.user.uid)
+          .set(this.folders);
     },
     toggleFolders() {
       this.showFolders = !this.showFolders;

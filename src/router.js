@@ -21,7 +21,7 @@ const router = new Router({
       component: Login,
       beforeEnter: (to, from, next) => {
         auth.isLoggedIn().then(isLoggedIn => {
-          if (to.path == "/login" && isLoggedIn) {
+          if (to.path === "/login" && isLoggedIn) {
             next({
               path: "/"
             });
@@ -34,20 +34,20 @@ const router = new Router({
   ]
 });
 
-router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    auth.isLoggedIn().then(isLoggedIn => {
-      if (!isLoggedIn) {
-        next({
-          path: "/login"
-        });
-      } else {
-        next();
-      }
-    });
-  } else {
-    next();
-  }
-});
+// router.beforeEach((to, from, next) => {
+//   if (to.matched.some(record => record.meta.requiresAuth)) {
+//     auth.isLoggedIn().then(isLoggedIn => {
+//       if (!isLoggedIn) {
+//         next({
+//           path: "/login"
+//         });
+//       } else {
+//         next();
+//       }
+//     });
+//   } else {
+//     next();
+//   }
+// });
 
 export default router;
